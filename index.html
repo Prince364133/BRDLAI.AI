@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRDL-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+        #container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 3em;
+            color: #007BFF;
+            margin: 0;
+            animation: slideIn 1s ease-in-out;
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        select, input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #007BFF;
+            border-radius: 5px;
+            background: #f9f9f9;
+            white-space: pre-wrap; /* Preserve whitespace */
+            text-align: left; /* Align text to the left */
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+ 
+    <h1>BRDL-AI</h1>
+    <h2>Ask your any query?</h2>
+    <select id="classSelect">
+        <option value="">Select Class</option>
+        <option value="Class 1">Class 1</option>
+        <option value="Class 2">Class 2</option>
+        <option value="Class 3">Class 3</option>
+        <option value="Class 4">Class 4</option>
+        <option value="Class 5">Class 5</option>
+        <option value="Class 6">Class 6</option>
+        <option value="Class 7">Class 7</option>
+        <option value="Class 8">Class 8</option>
+        <option value="Class 9">Class 9</option>
+        <option value="Class 10">Class 10</option>
+        <option value="Class 11">Class 11</option>
+        <option value="Class 12">Class 12</option>
+        <option value="Graduation">Graduation</option>
+        <option value="Graduation+">Graduation+</option>
+    </select>
+    
+    <input type="text" id="queryInput" placeholder="Type your query here..." />
+    <button onclick="startRecognition()">🎙️ SPEAK</button>
+    
+    <button onclick="submitQuery()">Submit Query</button>
+    <button onclick="clearFields()">Clear</button>
+
+    <div id="output" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+    // Function to automatically speak when the page loads
+    window.onload = function() {
+        const speech = new SpeechSynthesisUtterance("What is your query? Please submit here.");
+        window.speechSynthesis.speak(speech);
+    };
+
+    function startRecognition() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+            document.getElementById('queryInput').value = event.results[0][0].transcript;
+        };
+
+        recognition.start();
+    }
+
+    async function submitQuery() {
+        const selectedClass = document.getElementById('classSelect').value;
+        const query = document.getElementById('queryInput').value;
+
+        if (selectedClass && query) {
+            // Prepare output text
+            const outputText = `Class: ${selectedClass}\nYour Query: ${query}\n
+
+"Based on the following question or topic, provide a clear, structured, and age-appropriate response that meets the following guidelines:
+
+1. Explanation/Interpretation: Offer a detailed explanation or interpretation of the topic or question, ensuring that the complexity of the response matches the student’s class level. Simplify language and concepts for junior classes.
+
+
+2. Key Points/Concepts: Highlight the most important points or concepts relevant to the topic.
+
+
+3. Examples (if relevant): Provide age-appropriate examples or references from the subject.
+
+
+4. Clarity in Complex Concepts: For higher-level topics, break down complex ideas into simpler terms, while for lower grades, keep the explanation very basic and relatable.
+
+
+5. Common Mistakes or Clarifications: Mention any common misunderstandings or mistakes that students of that level might make.
+
+
+6. Additional Insights: Include any helpful tips, relevant insights, or takeaways suitable for the subject and class level."
+
+
+
+
+---
+
+Example Usage 1:
+
+Class: 5th
+Subject: English
+Topic: "What is a sentence?"
+
+Prompt to AI:
+"Explain what a sentence is for a 5th-grade student. The response should be simple and easy to understand, highlighting key points such as:
+
+1. A sentence is a group of words that make complete sense.
+
+
+2. It starts with a capital letter and ends with a punctuation mark (like a period).
+
+
+3. Example: 'The cat is sleeping.'
+
+
+4. Break down the idea so that it's relatable for a 5th-grade student. Avoid complex grammar terms.
+
+
+5. Provide any common mistakes that younger students make when forming sentences."
+
+
+
+
+---
+
+Example Usage 2:
+
+Class: 12th
+Subject: History
+Topic: "Causes of World War I"
+
+Prompt to AI:
+"Based on the question 'What were the causes of World War I?', provide a response for a 12th-grade student. The explanation should be structured and detailed, highlighting key concepts such as:
+
+1. The major causes, including militarism, alliances, imperialism, and nationalism.
+
+
+2. A simplified explanation of how the assassination of Archduke Franz Ferdinand triggered the war.
+
+
+3. Provide examples to help relate the concepts to historical events.
+
+
+4. Avoid over-simplifying, but ensure clarity for the student's level of understanding."
+
+
+
+
+---
+
+This version ensures the response is tailored to the student’s class level, and unnecessary comments, such as "no diagram needed," are excluded if not applicable.
+
+`;
+            document.getElementById('output').textContent = outputText;
+
+            // Copy only the text content of the output
+            await navigator.clipboard.writeText(outputText);
+            alert("Output copied to clipboard!");
+
+            // Redirect to ChatGPT in a new window
+            window.open("https://chatgpt.com/", "_blank");
+        } else {
+            alert('Please select a class and enter a query.');
+        }
+    }
+
+    function clearFields() {
+        document.getElementById('classSelect').selectedIndex = 0;
+        document.getElementById('queryInput').value = '';
+        document.getElementById('output').textContent = '';
+    }
+</script>
+
+</body>
+</html>
